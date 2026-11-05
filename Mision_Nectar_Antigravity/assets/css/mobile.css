@@ -1,0 +1,367 @@
+/**
+ * BeeStation: Misión Néctar - Estilos de Control Móvil Vertical
+ * Diseño ergonómico para pulgar (320px a 430px de ancho)
+ */
+
+.mobile-viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 10%, #FFFDF7 0%, #FFF8E9 65%, #F7E9CE 100%);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Lienzo de partículas móvil */
+.mobile-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Barra superior móvil */
+.mobile-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid rgba(255, 201, 79, 0.4);
+}
+
+.mobile-player-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-player-avatar {
+  width: 44px;
+  height: 44px;
+  background: #FFF;
+  border-radius: 50%;
+  border: 2px solid #FFC94F;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.mobile-player-name {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--leaf-dark);
+}
+
+.mobile-score-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.mobile-score-val {
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--bee-deep-honey);
+  line-height: 1.1;
+}
+
+.mobile-score-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #76563D;
+  text-transform: uppercase;
+}
+
+/* Indicador de Racha (Combo Meter) */
+.mobile-combo-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #FFF3D6;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #B45309;
+  border-bottom: 1.5px solid #FFC94F;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: all 0.2s ease;
+}
+
+.mobile-combo-bar.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Temporizador circular flotante */
+.mobile-timer-pill {
+  position: absolute;
+  top: 74px;
+  right: 20px;
+  background: #FFF;
+  border: 2px solid #F59E0B;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #D97706;
+  z-index: 12;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Zona principal de juego: Matriz de 6 Flores Táctiles */
+.mobile-play-zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 16px 28px 16px;
+  position: relative;
+  z-index: 8;
+}
+
+.mobile-instruction-text {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--leaf-dark);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.mobile-flowers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 24px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.mobile-flower-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 28px;
+  border: 2px solid rgba(255, 201, 79, 0.4);
+  box-shadow: 0 8px 16px rgba(52, 69, 54, 0.05);
+  cursor: pointer;
+  touch-action: manipulation;
+  position: relative;
+}
+
+.mobile-flower-slot:active {
+  transform: scale(0.94);
+}
+
+/* Popups flotantes de puntuación (+10 / +30 DORADA) */
+.mobile-score-popup {
+  position: absolute;
+  pointer-events: none;
+  font-family: var(--font-body);
+  font-weight: 900;
+  font-size: 1.4rem;
+  color: #F59E0B;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9), 0 0 10px rgba(245, 158, 11, 0.5);
+  animation: floatScoreUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 25;
+}
+
+.mobile-score-popup.gold {
+  color: #D97706;
+  font-size: 1.7rem;
+}
+
+@keyframes floatScoreUp {
+  0% { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+  30% { transform: translate(-50%, -20px) scale(1.15); opacity: 1; }
+  100% { transform: translate(-50%, -50px) scale(1); opacity: 0; }
+}
+
+/* PANTALLA DE ONBOARDING RÁPIDO MÓVIL */
+.mobile-onboarding-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 248, 233, 0.98);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 24px;
+  overflow-y: auto;
+}
+
+.mobile-onboard-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.mobile-onboard-title {
+  font-size: 1.8rem;
+  color: var(--leaf-dark);
+}
+
+.mobile-onboard-sub {
+  font-size: 1rem;
+  color: #76563D;
+  margin-top: 4px;
+}
+
+/* Selector de 6 Abejas */
+.mobile-bee-carousel {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.mobile-bee-option {
+  background: #FFF;
+  border: 2px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mobile-bee-option.selected {
+  border-color: #F59E0B;
+  background: #FFFDF7;
+  box-shadow: 0 6px 14px rgba(245, 158, 11, 0.25);
+  transform: translateY(-2px);
+}
+
+.mobile-bee-name {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--leaf-dark);
+}
+
+/* Input de Apodo */
+.mobile-input-group {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-input-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #76563D;
+}
+
+.mobile-name-row {
+  display: flex;
+  gap: 8px;
+}
+
+.mobile-text-input {
+  flex: 1;
+  height: 52px;
+  border: 2px solid #FFC94F;
+  border-radius: 16px;
+  padding: 0 16px;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--leaf-dark);
+  background: #FFF;
+  outline: none;
+}
+
+.mobile-btn-dice {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: 2px solid #FFC94F;
+  background: #FFF3D6;
+  font-size: 1.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* SALA DE ESPERA / PREPARACIÓN MÓVIL */
+.mobile-waiting-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 248, 233, 0.98);
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  text-align: center;
+}
+
+.mobile-waiting-title {
+  font-size: 1.6rem;
+  color: var(--leaf-dark);
+  margin-top: 16px;
+}
+
+.mobile-waiting-hint {
+  font-size: 1.05rem;
+  color: #76563D;
+  margin-top: 8px;
+  max-width: 320px;
+}
+
+/* PANTALLA DE RESULTADOS INDIVIDUALES MÓVIL */
+.mobile-results-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 248, 233, 0.98);
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  text-align: center;
+}
+
+.mobile-medal-card {
+  background: #FFF;
+  border: 3px solid #FFC94F;
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 15px 30px rgba(217, 119, 6, 0.15);
+  width: 100%;
+  max-width: 320px;
+  margin: 20px 0;
+}

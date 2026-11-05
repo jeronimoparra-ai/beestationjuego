@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeeStation: Misión Néctar — Portal Maestro y Prototipo Interactivo</title>
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <style>
+    .portal-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px 80px 24px;
+    }
+
+    .portal-hero {
+      background: linear-gradient(135deg, #FFFDF7 0%, #FFF3D6 100%);
+      border: 3px solid #FFC94F;
+      border-radius: 36px;
+      padding: 40px;
+      margin-bottom: 36px;
+      box-shadow: 0 20px 40px rgba(217, 119, 6, 0.12);
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .portal-hero-text {
+      flex: 1.4;
+    }
+
+    .portal-hero-image {
+      flex: 1;
+      max-width: 480px;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      border: 3px solid #FFF;
+    }
+
+    .portal-hero-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Tabs de navegación de vistas */
+    .view-tabs-nav {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      background: #FFF;
+      padding: 12px;
+      border-radius: 24px;
+      border: 2px solid #E2E8F0;
+      box-shadow: var(--shadow-card);
+    }
+
+    .view-tab-btn {
+      padding: 12px 24px;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #64748B;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .view-tab-btn.active {
+      color: #FFF;
+      background: linear-gradient(180deg, #FFC94F 0%, #F59E0B 100%);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Contenedor del simulador interactivo */
+    .simulator-stage {
+      background: #1C1C1E;
+      border-radius: 32px;
+      padding: 24px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+      margin-bottom: 48px;
+    }
+
+    .dual-simulator-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+      min-height: 680px;
+    }
+
+    @media (max-width: 1024px) {
+      .dual-simulator-grid {
+        grid-template-columns: 1fr;
+      }
+      .portal-hero {
+        flex-direction: column;
+      }
+    }
+
+    .sim-frame-wrapper {
+      background: #2D3748;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 2px solid #4A5568;
+    }
+
+    .sim-frame-header {
+      padding: 10px 18px;
+      background: #1A202C;
+      color: #CBD5E1;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sim-iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 600px;
+      border: none;
+      background: #FFF8E9;
+    }
+
+    /* Galería de Personajes y Recursos */
+    .section-title {
+      font-size: 2rem;
+      color: var(--leaf-dark);
+      margin-bottom: 12px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+
+    .character-card {
+      background: #FFF;
+      border: 2px solid #FFC94F;
+      border-radius: 24px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.2s ease;
+    }
+
+    .character-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .doc-link-card {
+      background: #FFF;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow-card);
+      transition: all 0.2s ease;
+    }
+
+    .doc-link-card:hover {
+      border-color: #F59E0B;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(245, 158, 11, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <div class="portal-container">
+    <!-- Hero Banner -->
+    <header class="portal-hero">
+      <div class="portal-hero-text">
+        <div class="badge-pill gold">Proyecto Oficial · SENA Centro Minero Ambiental</div>
+        <h1 class="font-display" style="font-size: 3rem; color: #1C1C1E; margin: 12px 0;">
+          BeeStation: <span style="color: #D97706;">Misión Néctar</span>
+        </h1>
+        <p style="font-size: 1.25rem; color: #5A6D5C; line-height: 1.5; margin-bottom: 24px;">
+          Videojuego arcade casual, familiar y multijugador cooperativo de 30 segundos. 
+          Diseñado integralmente por <strong>Antigravity</strong> como director creativo, game designer y director de arte, 
+          con prototipo interactivo funcional en tiempo real y transición educativa a la telemetría IoT de BeeStation.
+        </p>
+        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+          <a href="tv.html" target="_blank" class="btn-arcade">
+            📺 Abrir TV en Pantalla Completa
+          </a>
+          <a href="mobile.html" target="_blank" class="btn-arcade btn-secondary">
+            📱 Abrir Mando Móvil
+          </a>
+          <a href="organizer.html" target="_blank" class="btn-arcade btn-secondary">
+            🎛️ Consola de Organizador
+          </a>
+          <a href="telemetry.html" target="_blank" class="btn-arcade btn-green">
+            🔬 BeeStation IoT Demo
+          </a>
+        </div>
+      </div>
+      <div class="portal-hero-image">
+        <img src="assets/key_art.jpg" alt="Arte Conceptual Misión Néctar - Mielita en el Jardín Mágico" />
+      </div>
+    </header>
+
+    <!-- Barra de Pestañas del Prototipo -->
+    <nav class="view-tabs-nav">
+      <button class="view-tab-btn active" data-tab="dual">
+        🖥️ Simulador Dual (TV + Móvil Simultáneo)
+      </button>
+      <button class="view-tab-btn" data-tab="tv">
+        📺 Vista Televisor 16:9
+      </button>
+      <button class="view-tab-btn" data-tab="mobile">
+        📱 Vista Celular Vertical
+      </button>
+      <button class="view-tab-btn" data-tab="organizer">
+        🎛️ Consola Organizador
+      </button>
+      <button class="view-tab-btn" data-tab="telemetry">
+        🔬 Telemetría BeeStation IoT
+      </button>
+    </nav>
+
+    <!-- Escenario del Simulador Interactivo -->
+    <section class="simulator-stage" id="sim-container">
+      <div class="dual-simulator-grid" id="view-dual">
+        <!-- Frame TV -->
+        <div class="sim-frame-wrapper">
+          <div class="sim-frame-header">
+            <span>📺 Pantalla Televisor 16:9 (Público del Stand)</span>
+            <a href="tv.html" target="_blank" style="color: #FFC94F; text-decoration: none;">Abrir pestaña ↗</a>
+          </div>
+          <iframe src="tv.html" class="sim-iframe" id="iframe-tv"></iframe>
+        </div>
+        <!-- Frame Móvil -->
+        <div class="sim-frame-wrapper">
+          <div class="sim-frame-header">
+            <span>📱 Celular de Jugador (Mando Táctil)</span>
+            <a href="mobile.html" target="_blank" style="color: #FFC94F; text-decoration: none;">Abrir pestaña ↗</a>
+          </div>
+          <iframe src="mobile.html" class="sim-iframe" id="iframe-mobile"></iframe>
+        </div>
+      </div>
+
+      <!-- Vistas Individuales en Pestaña -->
+      <div id="view-single" style="display: none; height: 750px;">
+        <iframe id="iframe-single" class="sim-iframe" style="height: 100%; border-radius: 16px;"></iframe>
+      </div>
+    </section>
+
+    <!-- Galería de Personajes Oficiales -->
+    <section style="margin-bottom: 48px;">
+      <h2 class="section-title font-display">Biblia de Personajes: Mielita y el Enjambre Explorador</h2>
+      <p style="color: #76563D; margin-bottom: 24px; font-size: 1.05rem;">
+        Ilustraciones vectoriales dinámicas con paletas y accesorios únicos. 
+        Representan a los participantes durante la recolección en el stand.
+      </p>
+
+      <div class="cards-grid">
+        <!-- Mielita -->
+        <div class="character-card" style="border-width: 3px; border-color: #F59E0B; background: #FFFDF7;">
+          <div id="char-slot-mielita"></div>
+          <h3 class="font-display" style="font-size: 1.25rem; color: #D97706; margin-top: 8px;">Mielita (Guía)</h3>
+          <p style="font-size: 0.85rem; color: #64748B;">Líder de la colmena y oradora de la transición BeeStation IoT.</p>
+        </div>
+        <!-- 6 Exploradoras -->
+        <div class="character-card">
+          <div id="char-slot-nectar"></div>
+          <h3 class="font-display" style="font-size: 1.15rem; color: #1C1C1E; margin-top: 8px;">Néctar</h3>
+          <p style="font-size: 0.85rem; color: #64748B;">Corona de flor. Tradicional y amante del néctar alto.</p>
+        </div>
+        <div class="character-card">
+          <div id="char-slot-menta"></div>
+          <h3 class="font-display" style="font-size: 1.15rem; color: #1C1C1E; margin-top: 8px;">Menta</h3>
+          <p style="font-size: 0.85rem; color: #64748B;">Hoja de trébol. Veloz entre la vegetación baja.</p>
+        </div>
+        <div class="character-card">
+          <div id="char-slot-coral"></div>
+          <h3 class="font-display" style="font-size: 1.15rem; color: #1C1C1E; margin-top: 8px;">Coral</h3>
+          <p style="font-size: 0.85rem; color: #64748B;">Gafas aviador. Intrépida y cazadora de Flores Doradas.</p>
+        </div>
+        <div class="character-card">
+          <div id="char-slot-lavanda"></div>
+          <h3 class="font-display" style="font-size: 1.15rem; color: #1C1C1E; margin-top: 8px;">Lavanda</h3>
+          <p style="font-size: 0.85rem; color: #64748B;">Moño violeta. Rítmica y atenta al zumbido de la reina.</p>
+        </div>
+        <div class="character-card">
+          <div id="char-slot-cielo"></div>
+          <h3 class="font-display" style="font-size: 1.15rem; color: #1C1C1E; margin-top: 8px;">Cielo</h3>
+          <p style="font-size: 0.85rem; color: #64748B;">Antenas radar. Curiosa por los sensores IoT del ESP32.</p>
+        </div>
+        <div class="character-card">
+          <div id="char-slot-durazno"></div>
+          <h3 class="font-display" style="font-size: 1.15rem; color: #1C1C1E; margin-top: 8px;">Durazno</h3>
+          <p style="font-size: 0.85rem; color: #64748B;">Bufanda coral. Dulce y experta en celdas de cría.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catálogo de Flores del Jardín Mágico -->
+    <section style="margin-bottom: 48px;">
+      <h2 class="section-title font-display">Ecosistema Botánico: Especies Florales y Flor Dorada</h2>
+      <p style="color: #76563D; margin-bottom: 24px; font-size: 1.05rem;">
+        Cada flor responde con estallidos de polen y notas armónicas sintetizadas en Web Audio API.
+      </p>
+
+      <div class="cards-grid">
+        <div class="character-card">
+          <div id="flower-slot-margarita"></div>
+          <h3 class="font-display" style="font-size: 1.1rem; margin-top: 8px;">Margarita Sol</h3>
+          <div class="badge-pill gold" style="margin-top: 4px;">10 Puntos</div>
+        </div>
+        <div class="character-card">
+          <div id="flower-slot-coral"></div>
+          <h3 class="font-display" style="font-size: 1.1rem; margin-top: 8px;">Lirio Coral</h3>
+          <div class="badge-pill gold" style="margin-top: 4px;">10 Puntos</div>
+        </div>
+        <div class="character-card">
+          <div id="flower-slot-azul"></div>
+          <h3 class="font-display" style="font-size: 1.1rem; margin-top: 8px;">Campanilla Azul</h3>
+          <div class="badge-pill gold" style="margin-top: 4px;">10 Puntos</div>
+        </div>
+        <div class="character-card">
+          <div id="flower-slot-lavanda"></div>
+          <h3 class="font-display" style="font-size: 1.1rem; margin-top: 8px;">Orquídea Lavanda</h3>
+          <div class="badge-pill gold" style="margin-top: 4px;">10 Puntos</div>
+        </div>
+        <div class="character-card">
+          <div id="flower-slot-rosa"></div>
+          <h3 class="font-display" style="font-size: 1.1rem; margin-top: 8px;">Flor de Guayabo</h3>
+          <div class="badge-pill gold" style="margin-top: 4px;">10 Puntos</div>
+        </div>
+        <div class="character-card" style="border-width: 3px; border-color: #F59E0B; background: #FFFDF7;">
+          <div id="flower-slot-dorada"></div>
+          <h3 class="font-display" style="font-size: 1.15rem; color: #D97706; margin-top: 8px;">Loto Dorado</h3>
+          <div class="badge-pill gold" style="margin-top: 4px;">✨ 30 Pts Especial</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Documentación Oficial y Entregables de Diseño -->
+    <section>
+      <h2 class="section-title font-display">Documentación y Bibles de Diseño Técnico</h2>
+      <p style="color: #76563D; margin-bottom: 24px; font-size: 1.05rem;">
+        Entregables completos generados para el equipo de desarrollo y diseño:
+      </p>
+
+      <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <div class="doc-link-card">
+          <span class="badge-pill gold">Doc 01</span>
+          <h3 class="font-display">Game Design Document (GDD)</h3>
+          <p style="font-size: 0.88rem; color: #64748B;">Reglas, core loop de 30s, sistema de colmena, combos y roles multi-pantalla.</p>
+        </div>
+        <div class="doc-link-card">
+          <span class="badge-pill gold">Doc 02</span>
+          <h3 class="font-display">Brandbook & Design System</h3>
+          <p style="font-size: 0.88rem; color: #64748B;">Identidad visual, relación de convivencia con BeeStation, colores (#F59E0B, #D97706) y tipografía.</p>
+        </div>
+        <div class="doc-link-card">
+          <span class="badge-pill gold">Doc 03</span>
+          <h3 class="font-display">Character Bible</h3>
+          <p style="font-size: 0.88rem; color: #64748B;">Anatomía cute chibi de Mielita, 6 abejas exploradoras, poses, expresiones y personajes secundarios.</p>
+        </div>
+        <div class="doc-link-card">
+          <span class="badge-pill gold">Doc 04</span>
+          <h3 class="font-display">Environment Art Bible</h3>
+          <p style="font-size: 0.88rem; color: #64748B;">5 capas de parallax para el TV 16:9, catálogo botánico de flores y física de llenado de néctar.</p>
+        </div>
+        <div class="doc-link-card">
+          <span class="badge-pill gold">Doc 05</span>
+          <h3 class="font-display">Animation & Motion Bible</h3>
+          <p style="font-size: 0.88rem; color: #64748B;">Curvas cúbicas bézier, squash-and-stretch, ciclos de vuelo a 20Hz y transiciones cinematográficas.</p>
+        </div>
+        <div class="doc-link-card">
+          <span class="badge-pill gold">Doc 06</span>
+          <h3 class="font-display">Audio Specification</h3>
+          <p style="font-size: 0.88rem; color: #64748B;">Diseño sonoro procedural con Web Audio API: cero dependencias externas de audio y cero fallos 404.</p>
+        </div>
+        <div class="doc-link-card">
+          <span class="badge-pill gold">Doc 07</span>
+          <h3 class="font-display">BeeStation Bridge & Telemetry</h3>
+          <p style="font-size: 0.88rem; color: #64748B;">Conexión pedagógica con el hardware real SENA: ESP32, DHT22, báscula HX711 y espectro acústico de 240Hz.</p>
+        </div>
+        <div class="doc-link-card">
+          <span class="badge-pill gold">Doc 08</span>
+          <h3 class="font-display">Technical Implementation Manual</h3>
+          <p style="font-size: 0.88rem; color: #64748B;">Guía de despliegue local, sincronización entre ventanas y hoja de ruta para WebSocket ferial.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/characters.js"></script>
+  <script src="assets/js/flowers.js"></script>
+  <script>
+    // Inyectar personajes en la galería
+    document.getElementById('char-slot-mielita').innerHTML = window.renderBeeSVG({ character: 'mielita', size: 90, expression: 'celebrate', flying: true });
+    document.getElementById('char-slot-nectar').innerHTML = window.renderBeeSVG({ character: 'nectar', accessory: 'flower', size: 80 });
+    document.getElementById('char-slot-menta').innerHTML = window.renderBeeSVG({ character: 'menta', accessory: 'leaf', size: 80 });
+    document.getElementById('char-slot-coral').innerHTML = window.renderBeeSVG({ character: 'coral', accessory: 'goggles', size: 80 });
+    document.getElementById('char-slot-lavanda').innerHTML = window.renderBeeSVG({ character: 'lavanda', accessory: 'bow', size: 80 });
+    document.getElementById('char-slot-cielo').innerHTML = window.renderBeeSVG({ character: 'cielo', accessory: 'antenna', size: 80 });
+    document.getElementById('char-slot-durazno').innerHTML = window.renderBeeSVG({ character: 'durazno', accessory: 'scarf', size: 80 });
+
+    // Inyectar flores en la galería
+    document.getElementById('flower-slot-margarita').innerHTML = window.renderFlowerSVG({ type: 'margarita', size: 80 });
+    document.getElementById('flower-slot-coral').innerHTML = window.renderFlowerSVG({ type: 'coral', size: 80 });
+    document.getElementById('flower-slot-azul').innerHTML = window.renderFlowerSVG({ type: 'azul', size: 80 });
+    document.getElementById('flower-slot-lavanda').innerHTML = window.renderFlowerSVG({ type: 'lavanda', size: 80 });
+    document.getElementById('flower-slot-rosa').innerHTML = window.renderFlowerSVG({ type: 'rosa', size: 80 });
+    document.getElementById('flower-slot-dorada').innerHTML = window.renderFlowerSVG({ type: 'dorada', size: 80 });
+
+    // Pestañas del simulador
+    const tabs = document.querySelectorAll('.view-tab-btn');
+    const viewDual = document.getElementById('view-dual');
+    const viewSingle = document.getElementById('view-single');
+    const iframeSingle = document.getElementById('iframe-single');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const tabKey = tab.dataset.tab;
+
+        if (tabKey === 'dual') {
+          viewDual.style.display = 'grid';
+          viewSingle.style.display = 'none';
+        } else {
+          viewDual.style.display = 'none';
+          viewSingle.style.display = 'block';
+          if (tabKey === 'tv') iframeSingle.src = 'tv.html';
+          else if (tabKey === 'mobile') iframeSingle.src = 'mobile.html';
+          else if (tabKey === 'organizer') iframeSingle.src = 'organizer.html';
+          else if (tabKey === 'telemetry') iframeSingle.src = 'telemetry.html';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

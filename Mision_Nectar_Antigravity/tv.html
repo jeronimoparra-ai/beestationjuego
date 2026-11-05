@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeeStation: Misión Néctar — Pantalla TV (16:9)</title>
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/tv.css">
+</head>
+<body>
+  <div class="tv-viewport" id="tv-app">
+    <!-- Lienzo de partículas -->
+    <canvas id="tv-particles" class="tv-particle-canvas"></canvas>
+
+    <!-- Contenedor de enjambre de jugadores flotantes -->
+    <div id="tv-swarm" class="tv-swarm-container"></div>
+
+    <!-- Barra Superior -->
+    <header class="tv-header">
+      <div class="tv-brand-lockup">
+        <div class="tv-logo-tag">BEESTATION IoT</div>
+        <h1 class="tv-title font-display">Misión <span>Néctar</span></h1>
+      </div>
+      <div class="tv-meta-status">
+        <div class="badge-pill gold" id="tv-players-badge">
+          <span>🐝</span> <span id="tv-players-count">1 Explorador conectado</span>
+        </div>
+        <div class="tv-timer-pill">
+          <span>⏳</span>
+          <div class="tv-timer-num" id="tv-timer">30</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Escenario Principal -->
+    <main class="tv-main-stage">
+      <!-- Zona de Flores del Jardín -->
+      <section class="tv-garden-zone">
+        <div class="tv-flowers-grid" id="tv-flowers-container">
+          <!-- Las 6 ranuras de flores se inyectan dinámicamente -->
+        </div>
+      </section>
+
+      <!-- Zona de la Colmena / Ánfora Colectiva -->
+      <section class="tv-hive-zone">
+        <div class="tv-jar-wrapper">
+          <div class="tv-jar-cap"></div>
+          <div class="tv-jar-glass" id="tv-jar-glass">
+            <div class="tv-honey-liquid" id="tv-honey-fill">
+              <div class="tv-honey-wave"></div>
+            </div>
+            <div class="tv-hive-progress-label" id="tv-hive-percent">0%</div>
+          </div>
+          <div class="tv-overflow-badge" id="tv-overflow-badge">
+            ✨ ¡Reserva Real: +<span id="tv-overflow-val">0</span> gotas!
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- OVERLAY 1: LOBBY & CÓDIGO QR GIGANTE -->
+    <div class="tv-lobby-overlay" id="tv-lobby-overlay">
+      <div class="badge-pill gold">Stand SENA · Centro Minero Ambiental</div>
+      <h2 class="tv-lobby-callout">¡TOCA LAS FLORES QUE BRILLAN Y AYUDA A LLENAR LA COLMENA!</h2>
+      <p class="tv-lobby-sub">Escanea el código QR con tu celular para unirte a la partida cooperativa de 30 segundos.</p>
+      
+      <div class="tv-qr-box">
+        <!-- SVG Vectorial Limpio de Código QR -->
+        <svg class="tv-qr-code-img" viewBox="0 0 100 100" fill="#1C1C1E">
+          <rect width="100" height="100" fill="#FFF"/>
+          <!-- Patrones QR Esquinas -->
+          <rect x="10" y="10" width="24" height="24" fill="#1C1C1E" rx="3"/>
+          <rect x="14" y="14" width="16" height="16" fill="#FFF" rx="2"/>
+          <rect x="18" y="18" width="8" height="8" fill="#1C1C1E"/>
+
+          <rect x="66" y="10" width="24" height="24" fill="#1C1C1E" rx="3"/>
+          <rect x="70" y="14" width="16" height="16" fill="#FFF" rx="2"/>
+          <rect x="74" y="18" width="8" height="8" fill="#1C1C1E"/>
+
+          <rect x="10" y="66" width="24" height="24" fill="#1C1C1E" rx="3"/>
+          <rect x="14" y="70" width="16" height="16" fill="#FFF" rx="2"/>
+          <rect x="18" y="74" width="8" height="8" fill="#1C1C1E"/>
+
+          <!-- Módulos de datos estilizados -->
+          <circle cx="42" cy="18" r="3" fill="#F59E0B"/>
+          <circle cx="52" cy="18" r="3" fill="#1C1C1E"/>
+          <circle cx="42" cy="28" r="3" fill="#1C1C1E"/>
+          <circle cx="52" cy="28" r="3" fill="#F59E0B"/>
+          <rect x="40" y="40" width="20" height="20" fill="#FFC94F" rx="4"/>
+          <!-- Abejita centro QR -->
+          <circle cx="50" cy="50" r="6" fill="#76563D"/>
+          <circle cx="50" cy="50" r="3" fill="#FFE9A8"/>
+
+          <rect x="10" y="42" width="6" height="16" fill="#1C1C1E"/>
+          <rect x="22" y="42" width="6" height="8" fill="#1C1C1E"/>
+          <rect x="72" y="42" width="18" height="6" fill="#1C1C1E"/>
+          <rect x="72" y="54" width="8" height="16" fill="#1C1C1E"/>
+          <rect x="42" y="72" width="16" height="6" fill="#1C1C1E"/>
+          <rect x="66" y="78" width="24" height="12" fill="#1C1C1E"/>
+        </svg>
+        <span class="badge-pill">Sala: STAND-SENA-01</span>
+      </div>
+
+      <div class="tv-players-tray" id="tv-lobby-players-tray">
+        <!-- Badges de exploradores que van llegando -->
+      </div>
+
+      <button class="btn-arcade" id="tv-btn-start-demo">
+        ▶ Iniciar Partida Ahora
+      </button>
+    </div>
+
+    <!-- OVERLAY 2: CUENTA REGRESIVA 3-2-1 -->
+    <div class="tv-countdown-overlay" id="tv-countdown-overlay" style="display: none;">
+      <div class="tv-countdown-digit" id="tv-countdown-num">3</div>
+    </div>
+
+    <!-- OVERLAY 3: RESULTADOS Y PODIO COLECTIVO -->
+    <div class="tv-results-overlay" id="tv-results-overlay" style="display: none;">
+      <div class="badge-pill gold">¡MISIÓN CUMPLIDA!</div>
+      <h2 class="tv-lobby-callout" style="margin-top: 10px;">¡COLMENA AL 100% DE NÉCTAR!</h2>
+      <p class="tv-lobby-sub">Gracias al trabajo en equipo de todos los exploradores del stand.</p>
+
+      <!-- Podio de los 3 Mejores -->
+      <div class="tv-podium-container" id="tv-podium-slots">
+        <!-- Slot 2do Lugar -->
+        <div class="tv-podium-step second">
+          <div id="podium-2-avatar" style="margin-bottom: 8px;"></div>
+          <div id="podium-2-name" style="font-weight: 800; font-size: 0.95rem;">Explorador 2</div>
+          <div class="tv-podium-pillar">2</div>
+        </div>
+        <!-- Slot 1er Lugar -->
+        <div class="tv-podium-step first">
+          <div id="podium-1-avatar" style="margin-bottom: 8px;"></div>
+          <div id="podium-1-name" style="font-weight: 800; font-size: 1.1rem; color: #D97706;">Explorador 1</div>
+          <div class="tv-podium-pillar">1 👑</div>
+        </div>
+        <!-- Slot 3er Lugar -->
+        <div class="tv-podium-step third">
+          <div id="podium-3-avatar" style="margin-bottom: 8px;"></div>
+          <div id="podium-3-name" style="font-weight: 800; font-size: 0.95rem;">Explorador 3</div>
+          <div class="tv-podium-pillar">3</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 36px; display: flex; gap: 16px;">
+        <button class="btn-arcade btn-green" id="tv-btn-telemetry">
+          🔬 Conoce la Tecnología BeeStation IoT
+        </button>
+        <button class="btn-arcade btn-secondary" id="tv-btn-replay">
+          🔄 Jugar Otra Ronda
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/characters.js"></script>
+  <script src="assets/js/flowers.js"></script>
+  <script src="assets/js/audio.js"></script>
+  <script src="assets/js/particles.js"></script>
+  <script src="assets/js/sync.js"></script>
+  <script src="assets/js/game.js"></script>
+  <script>
+    // Inicialización de la pantalla de Televisor
+    const particleCanvas = document.getElementById('tv-particles');
+    const particleEngine = new NectarParticleEngine(particleCanvas);
+    particleEngine.start();
+
+    const gameCore = new NectarGameCore({ isHost: true, role: 'tv' });
+
+    // Elementos UI
+    const timerEl = document.getElementById('tv-timer');
+    const flowersContainer = document.getElementById('tv-flowers-container');
+    const honeyFillEl = document.getElementById('tv-honey-fill');
+    const honeyPercentEl = document.getElementById('tv-hive-percent');
+    const overflowBadge = document.getElementById('tv-overflow-badge');
+    const overflowVal = document.getElementById('tv-overflow-val');
+    const playersBadge = document.getElementById('tv-players-count');
+    const swarmContainer = document.getElementById('tv-swarm');
+
+    const lobbyOverlay = document.getElementById('tv-lobby-overlay');
+    const countdownOverlay = document.getElementById('tv-countdown-overlay');
+    const countdownNum = document.getElementById('tv-countdown-num');
+    const resultsOverlay = document.getElementById('tv-results-overlay');
+    const lobbyPlayersTray = document.getElementById('tv-lobby-players-tray');
+
+    // Renderizar flores iniciales
+    function renderTvFlowers(flowers) {
+      flowersContainer.innerHTML = '';
+      flowers.forEach(f => {
+        const slot = document.createElement('div');
+        slot.className = 'tv-flower-slot';
+        slot.id = 'tv-slot-' + f.slotIndex;
+        slot.innerHTML = window.renderFlowerSVG({
+          type: f.type,
+          state: f.state,
+          size: 130
+        });
+        flowersContainer.appendChild(slot);
+      });
+    }
+
+    gameCore.onFlowersUpdated = renderTvFlowers;
+    gameCore.onFlowerChanged = (f) => {
+      const slot = document.getElementById('tv-slot-' + f.slotIndex);
+      if (slot) {
+        slot.innerHTML = window.renderFlowerSVG({
+          type: f.type,
+          state: f.state,
+          size: 130
+        });
+      }
+    };
+
+    // Actualización de temporizador
+    gameCore.onTimerTick = (seconds) => {
+      timerEl.textContent = seconds;
+      if (seconds <= 5) {
+        timerEl.classList.add('alert');
+      } else {
+        timerEl.classList.remove('alert');
+      }
+    };
+
+    // Actualización de jugadores y enjambre
+    gameCore.onPlayersUpdated = () => {
+      const count = gameCore.players.size;
+      playersBadge.textContent = `${count} ${count === 1 ? 'Explorador conectado' : 'Exploradores conectados'}`;
+
+      // Actualizar tray del lobby
+      lobbyPlayersTray.innerHTML = '';
+      gameCore.players.forEach(p => {
+        const badge = document.createElement('div');
+        badge.className = 'badge-pill';
+        badge.innerHTML = `<span>🐝</span> ${p.name}`;
+        lobbyPlayersTray.appendChild(badge);
+      });
+    };
+
+    // Actualización de néctar y colmena
+    gameCore.onNectarCollected = (payload, hiveStats) => {
+      // Disparar trayectoria de partículas desde la flor hacia el frasco
+      const slot = document.getElementById('tv-slot-' + payload.slotIndex);
+      const jar = document.getElementById('tv-jar-glass');
+      if (slot && jar) {
+        const slotRect = slot.getBoundingClientRect();
+        const jarRect = jar.getBoundingClientRect();
+
+        particleEngine.launchDrop(
+          slotRect.left + slotRect.width / 2,
+          slotRect.top + slotRect.height / 2,
+          jarRect.left + jarRect.width / 2,
+          jarRect.top + 60,
+          payload.isGolden,
+          () => {
+            if (window.audioSystem) window.audioSystem.playHiveFill();
+          }
+        );
+      }
+
+      // Actualizar nivel de líquido
+      honeyFillEl.style.height = `${hiveStats.progressPercent}%`;
+      honeyPercentEl.textContent = `${hiveStats.progressPercent}%`;
+
+      if (hiveStats.overflow > 0) {
+        overflowBadge.classList.add('visible');
+        overflowVal.textContent = hiveStats.overflow;
+      }
+    };
+
+    // Transiciones de Estado
+    gameCore.onStateChanged = (state, data) => {
+      if (state === 'COUNTDOWN') {
+        lobbyOverlay.style.display = 'none';
+        countdownOverlay.style.display = 'flex';
+        resultsOverlay.style.display = 'none';
+      } else if (state === 'PLAYING') {
+        lobbyOverlay.style.display = 'none';
+        countdownOverlay.style.display = 'none';
+        resultsOverlay.style.display = 'none';
+      } else if (state === 'RESULTS') {
+        countdownOverlay.style.display = 'none';
+        resultsOverlay.style.display = 'flex';
+        particleEngine.celebrationFirework();
+        setTimeout(() => particleEngine.celebrationFirework(), 500);
+
+        // Renderizar podio
+        const top = gameCore.getTopPlayers(3);
+        if (top[0]) {
+          document.getElementById('podium-1-name').textContent = `${top[0].name} (${top[0].score} pts)`;
+          document.getElementById('podium-1-avatar').innerHTML = window.renderBeeSVG({ character: top[0].character, size: 70, expression: 'celebrate' });
+        }
+        if (top[1]) {
+          document.getElementById('podium-2-name').textContent = `${top[1].name} (${top[1].score} pts)`;
+          document.getElementById('podium-2-avatar').innerHTML = window.renderBeeSVG({ character: top[1].character, size: 55, expression: 'happy' });
+        }
+        if (top[2]) {
+          document.getElementById('podium-3-name').textContent = `${top[2].name} (${top[2].score} pts)`;
+          document.getElementById('podium-3-avatar').innerHTML = window.renderBeeSVG({ character: top[2].character, size: 50, expression: 'happy' });
+        }
+      } else if (state === 'LOBBY') {
+        lobbyOverlay.style.display = 'flex';
+        countdownOverlay.style.display = 'none';
+        resultsOverlay.style.display = 'none';
+        honeyFillEl.style.height = '0%';
+        honeyPercentEl.textContent = '0%';
+        overflowBadge.classList.remove('visible');
+      }
+    };
+
+    gameCore.onCountdownTick = (val) => {
+      countdownNum.textContent = val;
+    };
+
+    // Botones de acción
+    document.getElementById('tv-btn-start-demo').addEventListener('click', () => {
+      // Inyectar 4 bots si está solo para ver la colmena llenarse
+      if (gameCore.players.size < 2) {
+        gameCore.injectBots(4);
+      }
+      gameCore.startCountdown();
+    });
+
+    document.getElementById('tv-btn-replay').addEventListener('click', () => {
+      gameCore.resetRoom();
+    });
+
+    document.getElementById('tv-btn-telemetry').addEventListener('click', () => {
+      window.location.href = 'telemetry.html';
+    });
+
+    // Iniciar con ranuras base
+    gameCore.initFlowers();
+  </script>
+</body>
+</html>

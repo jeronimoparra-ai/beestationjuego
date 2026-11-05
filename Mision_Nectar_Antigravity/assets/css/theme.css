@@ -1,0 +1,177 @@
+/**
+ * BeeStation: Misión Néctar - Sistema de Estilos y Variables de Marca
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap');
+
+:root {
+  /* Marca Anfitriona BeeStation */
+  --bee-amber: #F59E0B;
+  --bee-deep-honey: #D97706;
+  --bee-dark: #1C1C1E;
+  --bee-gold: #FFC94F;
+
+  /* Jardín y Naturaleza */
+  --bg-cream: #FFF8E9;
+  --garden-green: #67A56D;
+  --soft-mint: #BCE5C8;
+  --sky-blue: #9EDDF1;
+  --coral-flower: #FF8C80;
+  --lavender: #B8A4E5;
+  --soft-peach: #FFD0AD;
+  --leaf-dark: #344536;
+  --nature-brown: #76563D;
+
+  /* Tipografías */
+  --font-display: 'Fredoka', cursive, sans-serif;
+  --font-body: 'Nunito', sans-serif;
+
+  /* Sombras Táctiles */
+  --shadow-btn: 0 6px 0 #D97706;
+  --shadow-card: 0 10px 25px rgba(52, 69, 54, 0.08);
+  --shadow-glow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-cream);
+  color: var(--leaf-dark);
+  overflow-x: hidden;
+  touch-action: manipulation;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+}
+
+/* BOTONES TÁCTILES PREMIUM ESTILO ARCADE */
+.btn-arcade {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: linear-gradient(180deg, #FFC94F 0%, #F59E0B 100%);
+  border: 2px solid #D97706;
+  border-radius: 999px;
+  padding: 14px 28px;
+  box-shadow: 0 6px 0 #B45309, 0 10px 15px rgba(217, 119, 6, 0.25);
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  text-decoration: none;
+  min-height: 52px;
+}
+
+.btn-arcade:hover {
+  filter: brightness(1.05);
+}
+
+.btn-arcade:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #B45309, 0 4px 8px rgba(217, 119, 6, 0.2);
+}
+
+.btn-arcade.btn-green {
+  background: linear-gradient(180deg, #86EFAC 0%, #22C55E 100%);
+  border-color: #16A34A;
+  box-shadow: 0 6px 0 #15803D;
+}
+
+.btn-arcade.btn-secondary {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFF3D6 100%);
+  color: var(--leaf-dark);
+  border-color: #FFC94F;
+  box-shadow: 0 6px 0 #D97706;
+}
+
+/* ANIMACIONES GLOBALES */
+@keyframes beeFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+
+@keyframes wingFlap {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.2); }
+}
+
+@keyframes flowerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes goldenAura {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+  50% { transform: scale(1.15) rotate(180deg); opacity: 1; }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.bee-anim-float {
+  animation: beeFloat 2.6s ease-in-out infinite;
+}
+
+.bee-anim-wings {
+  animation: wingFlap 0.06s infinite alternate ease-in-out;
+}
+
+.flower-state-active {
+  animation: flowerPulse 1.8s ease-in-out infinite;
+  cursor: pointer;
+}
+
+.anim-golden-pulse {
+  animation: goldenAura 3s linear infinite;
+}
+
+.anim-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}
+
+/* EFECTOS DE COSECHA SQUASH & BURST */
+.flower-state-harvested {
+  transform: scale(1.22);
+  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: brightness(1.2);
+}
+
+.flower-state-recharge {
+  opacity: 0.38;
+  filter: grayscale(0.5);
+  transform: scale(0.9);
+  transition: all 0.3s ease;
+}
+
+/* INSIGNIAS Y CHIPS */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FFF;
+  border: 1.5px solid #FFC94F;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--leaf-dark);
+}
+
+.badge-pill.gold {
+  background: #FFF8E9;
+  border-color: #F59E0B;
+  color: #B45309;
+}

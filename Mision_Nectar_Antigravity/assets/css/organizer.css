@@ -1,0 +1,102 @@
+/**
+ * BeeStation: Misión Néctar - Estilos de la Consola del Organizador (Game Master)
+ */
+
+.organizer-viewport {
+  max-width: 960px;
+  margin: 32px auto;
+  padding: 0 24px 60px 24px;
+}
+
+.organizer-card {
+  background: #FFF;
+  border-radius: 24px;
+  border: 2px solid #FFC94F;
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.organizer-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1.5px solid #F1F5F9;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.organizer-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.organizer-status-badge.lobby {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.organizer-status-badge.playing {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+.organizer-status-badge.results {
+  background: #E0E7FF;
+  color: #3730A3;
+}
+
+.organizer-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.organizer-bot-panel {
+  background: #FFFDF7;
+  border: 1.5px dashed #F59E0B;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.organizer-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.organizer-slider-row input[type="range"] {
+  flex: 1;
+}
+
+.organizer-players-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 8px;
+  background: #F8FAFC;
+  border-radius: 12px;
+}
+
+.organizer-player-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFF;
+  border: 1px solid #CBD5E1;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}

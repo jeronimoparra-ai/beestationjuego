@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeeStation: Misión Néctar — Consola del Organizador</title>
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/organizer.css">
+</head>
+<body style="background: #F8FAFC;">
+  <div class="organizer-viewport">
+    <header style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <div class="badge-pill gold">BeeStation · Control de Stand SENA</div>
+        <h1 class="font-display" style="font-size: 2rem; color: #1C1C1E; margin-top: 6px;">Consola del Organizador</h1>
+      </div>
+      <div id="org-room-status" class="organizer-status-badge lobby">
+        🟢 Estado: En Lobby (Esperando Jugadores)
+      </div>
+    </header>
+
+    <!-- Tarjeta 1: Acciones Principales de Sala -->
+    <div class="organizer-card">
+      <div class="organizer-card-header">
+        <h2 class="font-display" style="font-size: 1.35rem;">Control de la Partida</h2>
+        <span class="badge-pill" id="org-timer-badge">Tiempo: 30s</span>
+      </div>
+
+      <div class="organizer-controls-grid">
+        <button type="button" class="btn-arcade" id="org-btn-start">
+          ▶ Iniciar Cuenta Regresiva (3s)
+        </button>
+        <button type="button" class="btn-arcade btn-secondary" id="org-btn-reset">
+          🔄 Reiniciar Sala (Lobby)
+        </button>
+        <button type="button" class="btn-arcade btn-green" id="org-btn-telemetry">
+          🔬 Disparar Modo BeeStation IoT
+        </button>
+      </div>
+    </div>
+
+    <!-- Tarjeta 2: Inyector de Enjambre (Simulador de 1 a 50 Jugadores) -->
+    <div class="organizer-card">
+      <div class="organizer-card-header">
+        <div>
+          <h2 class="font-display" style="font-size: 1.35rem;">Simulador de Enjambre (Estrés de Feria)</h2>
+          <p style="font-size: 0.9rem; color: #64748B;">Permite inyectar visitantes virtuales para demostrar la colmena colectiva sin necesitar 50 teléfonos físicos.</p>
+        </div>
+      </div>
+
+      <div class="organizer-bot-panel">
+        <div class="organizer-slider-row">
+          <label style="font-weight: 700; min-width: 170px;">Número de Abejas Bot:</label>
+          <input type="range" id="org-bot-slider" min="2" max="50" value="8" step="1">
+          <span class="badge-pill gold" id="org-bot-val" style="min-width: 80px; text-align: center;">8 Abejas</span>
+        </div>
+        <button type="button" class="btn-arcade btn-secondary" id="org-btn-inject-bots">
+          🐝 Inyectar Enjambre Virtual en la Pantalla de TV
+        </button>
+      </div>
+    </div>
+
+    <!-- Tarjeta 3: Lista de Participantes Conectados -->
+    <div class="organizer-card">
+      <div class="organizer-card-header">
+        <h2 class="font-display" style="font-size: 1.35rem;">Participantes en el Stand (<span id="org-player-count">0</span>)</h2>
+        <span class="badge-pill gold" id="org-colmena-percent">Colmena: 0%</span>
+      </div>
+
+      <div class="organizer-players-list" id="org-players-list">
+        <div style="color: #94A3B8; font-style: italic; padding: 12px;">Esperando que los visitantes escaneen el código QR en la pantalla de TV...</div>
+      </div>
+    </div>
+
+    <!-- Tarjeta 4: Pruebas de Audio Web API -->
+    <div class="organizer-card">
+      <div class="organizer-card-header">
+        <h2 class="font-display" style="font-size: 1.35rem;">Control de Sonido del Stand</h2>
+      </div>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button type="button" class="btn-arcade btn-secondary" id="org-btn-test-pop">Test Pop Néctar</button>
+        <button type="button" class="btn-arcade btn-secondary" id="org-btn-test-gold">Test Flor Dorada</button>
+        <button type="button" class="btn-arcade btn-secondary" id="org-btn-test-fanfare">Test Fanfarria Victoria</button>
+        <button type="button" class="btn-arcade btn-secondary" id="org-btn-test-mute">Silenciar Audio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/characters.js"></script>
+  <script src="assets/js/audio.js"></script>
+  <script src="assets/js/sync.js"></script>
+  <script>
+    const statusBadge = document.getElementById('org-room-status');
+    const timerBadge = document.getElementById('org-timer-badge');
+    const colmenaPercent = document.getElementById('org-colmena-percent');
+    const playerCount = document.getElementById('org-player-count');
+    const playersList = document.getElementById('org-players-list');
+    const botSlider = document.getElementById('org-bot-slider');
+    const botVal = document.getElementById('org-bot-val');
+
+    let connectedPlayers = new Map();
+
+    botSlider.addEventListener('input', (e) => {
+      botVal.textContent = e.target.value + ' Abejas';
+    });
+
+    document.getElementById('org-btn-start').addEventListener('click', () => {
+      window.networkSync.send('START_COUNTDOWN');
+      statusBadge.className = 'organizer-status-badge playing';
+      statusBadge.textContent = '🟡 Estado: Iniciando Cuenta Regresiva (3s)...';
+    });
+
+    document.getElementById('org-btn-reset').addEventListener('click', () => {
+      window.networkSync.send('RESET_ROOM');
+      statusBadge.className = 'organizer-status-badge lobby';
+      statusBadge.textContent = '🟢 Estado: En Lobby (Esperando Jugadores)';
+      connectedPlayers.clear();
+      renderPlayersList();
+    });
+
+    document.getElementById('org-btn-telemetry').addEventListener('click', () => {
+      window.networkSync.send('SWITCH_TELEMETRY');
+      window.location.href = 'telemetry.html';
+    });
+
+    document.getElementById('org-btn-inject-bots').addEventListener('click', () => {
+      const count = parseInt(botSlider.value, 10);
+      window.networkSync.send('INJECT_BOTS', { count: count });
+    });
+
+    // Escuchar eventos de sincronización
+    window.networkSync.on('PLAYER_JOIN', (p) => {
+      connectedPlayers.set(p.id, p);
+      renderPlayersList();
+    });
+
+    window.networkSync.on('COLLECT_NECTAR', (payload) => {
+      const p = connectedPlayers.get(payload.playerId);
+      if (p) {
+        p.score = (p.score || 0) + payload.points;
+        renderPlayersList();
+      }
+    });
+
+    window.networkSync.on('GAME_OVER', (payload) => {
+      statusBadge.className = 'organizer-status-badge results';
+      statusBadge.textContent = '🏆 Estado: Partida Finalizada (Podio Activo)';
+    });
+
+    function renderPlayersList() {
+      playerCount.textContent = connectedPlayers.size;
+      playersList.innerHTML = '';
+      if (connectedPlayers.size === 0) {
+        playersList.innerHTML = '<div style="color: #94A3B8; font-style: italic; padding: 12px;">Esperando visitantes...</div>';
+        return;
+      }
+      connectedPlayers.forEach(p => {
+        const tag = document.createElement('div');
+        tag.className = 'organizer-player-tag';
+        tag.innerHTML = `<span>🐝</span> <strong>${p.name}</strong> <span style="color: #D97706;">(${p.score || 0} pts)</span> ${p.isBot ? '<span style="font-size:0.7rem; color:#64748B;">[BOT]</span>' : ''}`;
+        playersList.appendChild(tag);
+      });
+    }
+
+    // Audio test buttons
+    document.getElementById('org-btn-test-pop').addEventListener('click', () => window.audioSystem.playPop());
+    document.getElementById('org-btn-test-gold').addEventListener('click', () => window.audioSystem.playGoldenBurst());
+    document.getElementById('org-btn-test-fanfare').addEventListener('click', () => window.audioSystem.playVictory());
+    document.getElementById('org-btn-test-mute').addEventListener('click', (e) => {
+      const muted = window.audioSystem.toggleMute();
+      e.target.textContent = muted ? 'Activar Audio' : 'Silenciar Audio';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120" width="320" height="120">
+  <defs>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFE9A8" />
+      <stop offset="50%" stop-color="#FFC94F" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+  <!-- Hexágono Panal Base -->
+  <polygon points="50,20 80,38 80,72 50,90 20,72 20,38" fill="url(#goldGrad)" stroke="#D97706" stroke-width="4" />
+  <!-- Gota de Néctar en Hexágono -->
+  <path d="M50 35 C42 48 38 56 38 64 C38 72 44 78 50 78 C56 78 62 72 62 64 C62 56 58 48 50 35 Z" fill="#FFF8E9" />
+  <circle cx="47" cy="60" r="3" fill="#F59E0B" />
+  <!-- Título -->
+  <text x="96" y="48" font-family="'Fredoka', sans-serif" font-size="32" font-weight="700" fill="#1C1C1E">MISIÓN</text>
+  <text x="96" y="82" font-family="'Fredoka', sans-serif" font-size="32" font-weight="700" fill="#D97706">NÉCTAR</text>
+  <text x="98" y="102" font-family="'Nunito', sans-serif" font-size="14" font-weight="800" fill="#76563D" letter-spacing="1.5">UN JUEGO BEESTATION IoT</text>
+</svg>

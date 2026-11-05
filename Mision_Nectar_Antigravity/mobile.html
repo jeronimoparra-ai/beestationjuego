@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BeeStation: Misión Néctar — Control Celular</title>
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/mobile.css">
+</head>
+<body>
+  <div class="mobile-viewport" id="mobile-app">
+    <!-- Lienzo de partículas -->
+    <canvas id="mobile-particles" class="mobile-canvas"></canvas>
+
+    <!-- Barra Superior -->
+    <header class="mobile-header">
+      <div class="mobile-player-pill">
+        <div class="mobile-player-avatar" id="m-player-avatar"></div>
+        <div>
+          <div class="mobile-player-name" id="m-player-name">Explorador</div>
+          <span class="badge-pill gold" style="padding: 2px 8px; font-size: 0.72rem;">Stand SENA</span>
+        </div>
+      </div>
+      <div class="mobile-score-box">
+        <div class="mobile-score-val" id="m-score-val">0</div>
+        <div class="mobile-score-label">Néctar</div>
+      </div>
+    </header>
+
+    <!-- Barra de Racha / Combo -->
+    <div class="mobile-combo-bar" id="m-combo-bar">
+      🔥 ¡Racha x<span id="m-combo-multiplier">2</span>! <span id="m-combo-label">Puntos Dobles</span>
+    </div>
+
+    <!-- Temporizador Circular Flotante -->
+    <div class="mobile-timer-pill" id="m-timer-pill">
+      ⏳ <span id="m-timer-num">30</span>s
+    </div>
+
+    <!-- Zona Central de Juego Táctil -->
+    <main class="mobile-play-zone">
+      <div class="mobile-instruction-text">
+        ¡TOCA LAS FLORES QUE BRILLAN!
+      </div>
+      <div class="mobile-flowers-grid" id="m-flowers-container">
+        <!-- Las 6 flores táctiles se inyectan dinámicamente -->
+      </div>
+    </main>
+
+    <!-- PANTALLA 1: ONBOARDING RÁPIDO -->
+    <div class="mobile-onboarding-screen" id="m-onboarding-screen">
+      <div class="mobile-onboard-header">
+        <div class="badge-pill gold">BeeStation · Misión Néctar</div>
+        <h1 class="mobile-onboard-title font-display" style="margin-top: 8px;">¡Conviértete en Abeja!</h1>
+        <p class="mobile-onboard-sub">Elige tu exploradora y apodo para ayudar a llenar la colmena.</p>
+      </div>
+
+      <!-- Selector de 6 Abejas -->
+      <div class="mobile-bee-carousel" id="m-bee-carousel">
+        <!-- Opciones de abejas inyectadas -->
+      </div>
+
+      <!-- Input de Apodo con Dado Aleatorio -->
+      <div class="mobile-input-group">
+        <label class="mobile-input-label">Tu Nombre de Explorador:</label>
+        <div class="mobile-name-row">
+          <input type="text" id="m-name-input" class="mobile-text-input" maxlength="14" value="Abejita Veloz">
+          <button type="button" id="m-btn-random-name" class="mobile-btn-dice" title="Nombre al azar">🎲</button>
+        </div>
+      </div>
+
+      <button type="button" class="btn-arcade" id="m-btn-ready" style="width: 100%; margin-top: auto;">
+        ✨ ¡Listo para Recolectar!
+      </button>
+    </div>
+
+    <!-- PANTALLA 2: SALA DE ESPERA / PREPARACIÓN -->
+    <div class="mobile-waiting-screen" id="m-waiting-screen" style="display: none;">
+      <div id="m-waiting-avatar"></div>
+      <h2 class="mobile-waiting-title font-display">¡Estás en la Sala de Espera!</h2>
+      <p class="mobile-waiting-hint">
+        Mira hacia la pantalla grande de televisión. La partida de 30 segundos comenzará en cualquier momento.
+      </p>
+      <div class="badge-pill gold" style="margin-top: 24px;">
+        🐝 Conectado al Stand SENA
+      </div>
+    </div>
+
+    <!-- PANTALLA 3: RESULTADOS INDIVIDUALES -->
+    <div class="mobile-results-screen" id="m-results-screen" style="display: none;">
+      <div class="badge-pill gold">¡GRAN TRABAJO EN EQUIPO!</div>
+      <h2 class="font-display" style="font-size: 1.8rem; margin-top: 10px;">¡Misión Completada!</h2>
+
+      <div class="mobile-medal-card">
+        <div style="font-size: 3rem; margin-bottom: 8px;">🏅</div>
+        <div class="font-display" style="font-size: 1.3rem; color: #B45309;">Medalla de Oro al Esfuerzo</div>
+        <div style="font-size: 2.4rem; font-weight: 900; color: #D97706; margin: 12px 0;" id="m-res-score">
+          0 pts
+        </div>
+        <div style="font-size: 0.95rem; color: #76563D;">
+          Aportaste <strong id="m-res-drops">0</strong> gotas al gran tarro de miel colectivo.
+        </div>
+      </div>
+
+      <button type="button" class="btn-arcade" id="m-btn-play-again" style="width: 100%; margin-bottom: 12px;">
+        🔄 Jugar Otra Vez
+      </button>
+      <button type="button" class="btn-arcade btn-secondary" id="m-btn-view-telemetry" style="width: 100%;">
+        🔬 Conoce BeeStation IoT
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/characters.js"></script>
+  <script src="assets/js/flowers.js"></script>
+  <script src="assets/js/audio.js"></script>
+  <script src="assets/js/particles.js"></script>
+  <script src="assets/js/sync.js"></script>
+  <script src="assets/js/game.js"></script>
+  <script>
+    // Inicialización del Control Móvil
+    const particleCanvas = document.getElementById('mobile-particles');
+    const particleEngine = new NectarParticleEngine(particleCanvas);
+    particleEngine.start();
+
+    const gameCore = new NectarGameCore({ isHost: false, role: 'mobile' });
+
+    let selectedCharId = 'nectar';
+    const randomNames = ['Abejita Veloz', 'Rayo Miel', 'Alita Dorada', 'Polen Boy', 'Sol de Primavera', 'Zumbadora', 'Chispita'];
+
+    // Referencias UI
+    const onboardingScreen = document.getElementById('m-onboarding-screen');
+    const waitingScreen = document.getElementById('m-waiting-screen');
+    const resultsScreen = document.getElementById('m-results-screen');
+    const flowersContainer = document.getElementById('m-flowers-container');
+    const nameInput = document.getElementById('m-name-input');
+    const playerAvatarEl = document.getElementById('m-player-avatar');
+    const playerNameEl = document.getElementById('m-player-name');
+    const scoreValEl = document.getElementById('m-score-val');
+    const timerNumEl = document.getElementById('m-timer-num');
+    const comboBar = document.getElementById('m-combo-bar');
+    const comboMultEl = document.getElementById('m-combo-multiplier');
+
+    // Inyectar las 6 opciones de abejas en el Onboarding
+    const beeCarousel = document.getElementById('m-bee-carousel');
+    (window.EXPLORER_BEES || []).forEach((bee, idx) => {
+      const opt = document.createElement('div');
+      opt.className = 'mobile-bee-option' + (idx === 0 ? ' selected' : '');
+      opt.dataset.id = bee.id;
+      opt.innerHTML = `
+        <div>${window.renderBeeSVG({ character: bee.palette, accessory: bee.accessory, size: 55 })}</div>
+        <div class="mobile-bee-name">${bee.name}</div>
+      `;
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.mobile-bee-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedCharId = bee.id;
+      });
+      beeCarousel.appendChild(opt);
+    });
+
+    // Botón dado para nombre aleatorio
+    document.getElementById('m-btn-random-name').addEventListener('click', () => {
+      nameInput.value = randomNames[Math.floor(Math.random() * randomNames.length)];
+    });
+
+    // Confirmar Onboarding y entrar a la sala
+    document.getElementById('m-btn-ready').addEventListener('click', () => {
+      const name = nameInput.value.trim() || 'Abejita';
+      const player = gameCore.registerLocalPlayer({ name: name, character: selectedCharId });
+
+      playerNameEl.textContent = player.name;
+      playerAvatarEl.innerHTML = window.renderBeeSVG({ character: player.character, size: 40 });
+      document.getElementById('m-waiting-avatar').innerHTML = window.renderBeeSVG({ character: player.character, size: 120, flying: true });
+
+      onboardingScreen.style.display = 'none';
+      waitingScreen.style.display = 'flex';
+      if (window.audioSystem) window.audioSystem.playPop();
+    });
+
+    // Renderizar flores móviles
+    function renderMobileFlowers(flowers) {
+      flowersContainer.innerHTML = '';
+      flowers.forEach(f => {
+        const slot = document.createElement('div');
+        slot.className = 'mobile-flower-slot';
+        slot.id = 'm-slot-' + f.slotIndex;
+        slot.innerHTML = window.renderFlowerSVG({
+          type: f.type,
+          state: f.state,
+          size: 95
+        });
+
+        // Evento táctil ergonómico
+        const handleTap = (e) => {
+          e.preventDefault();
+          const harvestResult = gameCore.tapFlower(f.slotIndex);
+          if (harvestResult) {
+            // Animación de partículas y popup flotante
+            const rect = slot.getBoundingClientRect();
+            particleEngine.burstAt(rect.left + rect.width / 2, rect.top + rect.height / 2, harvestResult.isGolden, 10);
+            showScorePopup(rect.left + rect.width / 2, rect.top, harvestResult.points, harvestResult.isGolden);
+
+            // Actualizar marcador personal
+            scoreValEl.textContent = (gameCore.localPlayer ? gameCore.localPlayer.score : 0);
+
+            // Actualizar barra de combo
+            if (harvestResult.combo >= 2) {
+              comboBar.classList.add('active');
+              comboMultEl.textContent = harvestResult.multiplier;
+            }
+          }
+        };
+
+        slot.addEventListener('pointerdown', handleTap);
+        flowersContainer.appendChild(slot);
+      });
+    }
+
+    function showScorePopup(x, y, points, isGolden) {
+      const popup = document.createElement('div');
+      popup.className = 'mobile-score-popup' + (isGolden ? ' gold' : '');
+      popup.style.left = x + 'px';
+      popup.style.top = y + 'px';
+      popup.textContent = `+${points}${isGolden ? ' DORADA!' : ''}`;
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 700);
+    }
+
+    gameCore.onFlowersUpdated = renderMobileFlowers;
+    gameCore.onFlowerChanged = (f) => {
+      const slot = document.getElementById('m-slot-' + f.slotIndex);
+      if (slot) {
+        slot.innerHTML = window.renderFlowerSVG({
+          type: f.type,
+          state: f.state,
+          size: 95
+        });
+      }
+    };
+
+    gameCore.onTimerTick = (seconds) => {
+      timerNumEl.textContent = seconds;
+    };
+
+    gameCore.onStateChanged = (state, data) => {
+      if (state === 'PLAYING') {
+        waitingScreen.style.display = 'none';
+        resultsScreen.style.display = 'none';
+      } else if (state === 'RESULTS') {
+        resultsScreen.style.display = 'flex';
+        comboBar.classList.remove('active');
+        const p = gameCore.localPlayer || { score: 0, drops: 0 };
+        document.getElementById('m-res-score').textContent = `${p.score} pts`;
+        document.getElementById('m-res-drops').textContent = p.drops;
+      } else if (state === 'LOBBY') {
+        waitingScreen.style.display = 'flex';
+        resultsScreen.style.display = 'none';
+        scoreValEl.textContent = '0';
+        comboBar.classList.remove('active');
+      }
+    };
+
+    // Botones de resultados
+    document.getElementById('m-btn-play-again').addEventListener('click', () => {
+      gameCore.resetRoom();
+    });
+
+    document.getElementById('m-btn-view-telemetry').addEventListener('click', () => {
+      window.location.href = 'telemetry.html';
+    });
+
+    // Iniciar con flores base
+    gameCore.initFlowers();
+  </script>
+</body>
+</html>

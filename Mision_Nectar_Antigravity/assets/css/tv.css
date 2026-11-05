@@ -1,0 +1,417 @@
+/**
+ * BeeStation: Misión Néctar - Estilos de Pantalla de Televisión 16:9
+ */
+
+.tv-viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: 1920px;
+  max-height: 1080px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 15%, #FFFDF7 0%, #FFF8E9 55%, #F7E9CE 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Lienzo de partículas de fondo */
+.tv-particle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Barra superior del TV */
+.tv-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 48px;
+}
+
+.tv-brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tv-logo-tag {
+  background: var(--bee-dark);
+  color: #FFF;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border-left: 4px solid var(--bee-amber);
+}
+
+.tv-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--leaf-dark);
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.8);
+}
+
+.tv-title span {
+  color: var(--bee-deep-honey);
+}
+
+.tv-meta-status {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.tv-timer-pill {
+  background: #FFF;
+  border: 3px solid #F59E0B;
+  border-radius: 999px;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+.tv-timer-num {
+  font-family: var(--font-body);
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: var(--bee-deep-honey);
+  min-width: 60px;
+  text-align: center;
+}
+
+.tv-timer-num.alert {
+  color: #EF4444;
+  animation: flowerPulse 0.6s infinite alternate;
+}
+
+/* Escenario Central */
+.tv-main-stage {
+  position: relative;
+  z-index: 8;
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 48px 32px 48px;
+}
+
+/* Lado Izquierdo: Campo de Flores y Jardín */
+.tv-garden-zone {
+  flex: 1.4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.tv-flowers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  max-width: 620px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  border-radius: 36px;
+  border: 2px solid rgba(255, 201, 79, 0.5);
+  box-shadow: 0 15px 35px rgba(52, 69, 54, 0.06);
+}
+
+.tv-flower-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 140px;
+  position: relative;
+}
+
+/* Lado Derecho: La Gran Colmena Colectiva y QR */
+.tv-hive-zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Frasco Ánfora de Néctar */
+.tv-jar-wrapper {
+  position: relative;
+  width: 280px;
+  height: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tv-jar-glass {
+  position: relative;
+  width: 240px;
+  height: 320px;
+  border: 8px solid rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 40px 40px 60px 60px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(217, 119, 6, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.tv-honey-liquid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, #FFE9A8 0%, #FFC94F 40%, #F59E0B 100%);
+  transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -4px 15px rgba(245, 158, 11, 0.5);
+}
+
+.tv-honey-wave {
+  position: absolute;
+  top: -12px;
+  left: 0;
+  width: 200%;
+  height: 24px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 24'%3E%3Cpath d='M0 12 Q 100 0 200 12 T 400 12 T 600 12 T 800 12 V 24 H 0 Z' fill='%23FFE9A8'/%3E%3C/svg%3E");
+  background-size: 400px 24px;
+  animation: waveMotion 3s linear infinite;
+}
+
+@keyframes waveMotion {
+  from { transform: translateX(0); }
+  to { transform: translateX(-400px); }
+}
+
+.tv-jar-cap {
+  width: 160px;
+  height: 28px;
+  background: #76563D;
+  border-radius: 14px 14px 6px 6px;
+  border: 3px solid #5A3632;
+  box-shadow: 0 4px 0 #344536;
+  z-index: 2;
+}
+
+.tv-hive-progress-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-body);
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: #344536;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9);
+  z-index: 5;
+}
+
+.tv-overflow-badge {
+  margin-top: 16px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #B45309;
+  background: #FFF;
+  border: 2px dashed #F59E0B;
+  padding: 6px 18px;
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tv-overflow-badge.visible {
+  opacity: 1;
+}
+
+/* Enjambre de abejitas de jugadores flotando en la TV */
+.tv-swarm-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.tv-swarm-bee {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tv-swarm-name {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: rgba(28, 28, 30, 0.8);
+  color: #FFF;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* LOBBY / QR DE ENTRADA GIGANTE */
+.tv-lobby-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 248, 233, 0.95);
+  backdrop-filter: blur(12px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.tv-qr-box {
+  background: #FFF;
+  padding: 24px;
+  border-radius: 36px;
+  border: 4px solid #FFC94F;
+  box-shadow: 0 20px 40px rgba(217, 119, 6, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.tv-qr-code-img {
+  width: 220px;
+  height: 220px;
+  background: #FFF;
+  border-radius: 16px;
+}
+
+.tv-lobby-callout {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--leaf-dark);
+  text-align: center;
+}
+
+.tv-lobby-sub {
+  font-size: 1.35rem;
+  color: #76563D;
+  max-width: 650px;
+  text-align: center;
+}
+
+.tv-players-tray {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  max-width: 800px;
+  justify-content: center;
+}
+
+/* PANTALLA DE RESULTADOS / PODIO */
+.tv-results-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 248, 233, 0.96);
+  backdrop-filter: blur(16px);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.tv-podium-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.tv-podium-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;
+}
+
+.tv-podium-pillar {
+  width: 100%;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #FFF;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.tv-podium-step.first .tv-podium-pillar {
+  height: 180px;
+  background: linear-gradient(180deg, #FFC94F 0%, #F59E0B 100%);
+}
+
+.tv-podium-step.second .tv-podium-pillar {
+  height: 130px;
+  background: linear-gradient(180deg, #CBD5E1 0%, #94A3B8 100%);
+}
+
+.tv-podium-step.third .tv-podium-pillar {
+  height: 95px;
+  background: linear-gradient(180deg, #FDBA74 0%, #C2410C 100%);
+}
+
+/* OVERLAY DE CUENTA REGRESIVA 3-2-1 */
+.tv-countdown-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(28, 28, 30, 0.7);
+  backdrop-filter: blur(10px);
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tv-countdown-digit {
+  font-family: var(--font-display);
+  font-size: 14rem;
+  font-weight: 800;
+  color: #FFC94F;
+  text-shadow: 0 0 50px rgba(245, 158, 11, 0.8), 0 8px 0 #D97706;
+  animation: countdownPunch 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes countdownPunch {
+  0% { transform: scale(2.2); opacity: 0; }
+  40% { transform: scale(1); opacity: 1; }
+  85% { transform: scale(0.95); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0; }
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeeStation — Monitoreo Apícola IoT no Invasivo (Demostración)</title>
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/telemetry.css">
+</head>
+<body style="background: #FDFBF7;">
+  <div style="padding: 20px 24px 0 24px; max-width: 1040px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+    <a href="index.html" class="btn-arcade btn-secondary" style="font-size: 0.95rem; padding: 8px 18px;">
+      ◀ Volver al Portal del Videojuego
+    </a>
+    <div style="display: flex; gap: 10px;">
+      <a href="tv.html" class="btn-arcade" style="font-size: 0.95rem; padding: 8px 18px;">
+        📺 Ver Pantalla TV
+      </a>
+      <a href="mobile.html" class="btn-arcade btn-secondary" style="font-size: 0.95rem; padding: 8px 18px;">
+        📱 Ver Control Celular
+      </a>
+    </div>
+  </div>
+
+  <main id="telemetry-root"></main>
+
+  <script src="assets/js/characters.js"></script>
+  <script src="assets/js/telemetry.js"></script>
+  <script>
+    const demo = new BeeStationTelemetryDemo('telemetry-root');
+    demo.init();
+  </script>
+</body>
+</html>
